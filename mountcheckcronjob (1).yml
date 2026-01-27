@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mountcheck
+spec:
+  schedule: "30 5 * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mountcheck
+            image: busybox:1.28
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - bash -x /scripts/mount.sh nats-hub-aks-01-admin
+            image: tbshelmacr.azurecr.io/cronjobbaseimage:23707
+            imagePullPolicy: IfNotPresent
+            volumeMounts:
+            - mountPath: /scripts
+              name: mountcheck
+          imagePullSecrets:
+          - name: jobsc			  
+          restartPolicy: OnFailure
+          volumes:
+          - csi:
+              driver: file.csi.azure.com
+              readOnly: false
+              volumeAttributes:
+                mountOptions: dir_mode=0777,file_mode=0777,cache=strict,actimeo=30
+                secretName: cronjob-secret
+                shareName: cronjob-removingdata
+            name: mountcheck				

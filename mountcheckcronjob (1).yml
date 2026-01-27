@@ -18,7 +18,7 @@ spec:
             - /bin/sh
             - -c
             - bash -x /scripts/mount.sh nats-hub-aks-01-admin
-            image: tbshelmacr.azurecr.io/cronjobbaseimage:23707
+            image: acr.azurecr.io/cronjobbaseimage:23707
             imagePullPolicy: IfNotPresent
             volumeMounts:
             - mountPath: /scripts
@@ -34,4 +34,5 @@ spec:
                 mountOptions: dir_mode=0777,file_mode=0777,cache=strict,actimeo=30
                 secretName: cronjob-secret
                 shareName: cronjob-removingdata
+
             name: mountcheck				

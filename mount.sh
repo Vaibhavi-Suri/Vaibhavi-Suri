@@ -2,16 +2,16 @@ cd
 mkdir .kube
 cp /scripts/config .kube/
 kubectl config use-context $1
-if [ $1 == "tanla-wapp-dev-aks-01-admin" ] || [ $1 == "tanla-dev-ott-ent-cloud-aks-01-admin" ]
+if [ $1 == "dev-aks-01-admin" ] || [ $1 == "cloud-aks-01-admin" ]
 then
 	kubectl get po -n nats | awk '{print $1}' | grep -v "NAME" >> podnames.txt
 	kubectl get po -n redis | awk '{print $1}' | grep -v "NAME" >> podnames.txt
 	kubectl get po -n vault | awk '{print $1}' | grep -v "NAME" >> podnames.txt
 	kubectl get po -n pg-ha | awk '{print $1}' | grep -v "NAME" >> podnames.txt
-elif [  $1 == "nats-hub-aks-01-admin" ] || [ $1 == "tanla-wapp-dev-aks-02-admin" ]
+elif [  $1 == "aks-01-admin" ] || [ $1 == "-aks-02-admin" ]
 then
 	kubectl get po -n nats | awk '{print $1}' | grep -v "NAME" >> podnames.txt
-elif [ $1 == "keycloak-server-dev-aks-01" ]
+elif [ $1 == "dev-aks-01" ]
 then
 	kubectl get po -n keycloak | awk '{print $1}' | grep -v "NAME" >> podnames.txt
 else
@@ -19,7 +19,7 @@ else
 	exit 1
 fi	
 while IFS= read -r podname; do
-	if [ $1 == "tanla-wapp-dev-aks-01-admin" ] || [ $1 == "tanla-dev-ott-ent-cloud-aks-01-admin" ]
+	if [ $1 == "aks-01-admin" ] || [ $1 == "aks-01-admin" ]
 	then
 		if [[ "$podname" == *"redis"* ]]
 		then
@@ -30,7 +30,7 @@ while IFS= read -r podname; do
 		else
 			echo "namespace doesn't exist in core and telco clusters"
 		fi
-	elif [  $1 == "nats-hub-aks-01-admin" ] || [ $1 == "tanla-wapp-dev-aks-02-admin" ]
+	elif [  $1 == "aks-01-admin" ] || [ $1 == "aks-02-admin" ]
 	then 
 		if [[ "$podname" == *"nats"* ]]
 		then
@@ -38,7 +38,7 @@ while IFS= read -r podname; do
 		else
 			echo "namespace doesn't exist in hub cluster"
 		fi
-	elif [ $1 == "keycloak-server-dev-aks-01-admin" ]
+	elif [ $1 == "aks-01-admin" ]
 	then
 		if [[ "$podname" == *"keycloak"* ]]
 		then 
@@ -83,7 +83,7 @@ then
 	sed -i "3 a\<p>Hello DevOps Team, <br><br><strong>WARNING:</strong> Disk usage for below mount points on cluster $1 is > 75%.</p>" mail.html
 	sed -i '4 a\<p>Please increase Disk Size (OR) Purge Unwanted Data.</p>' mail.html
 	echo "<p style="color:green"><strong>NOTE: This is auto generated email please do not reply</strong></p>" >> mail.html
-	cat mail.html | sendemail -f noreply-wiselyalerts@tanla.com -t devops@tanla.com -cc Pavan.Kuchibhatla@tanla.com -u ALERT : $1 mounts usage warning -s smtp.office365.com:587 -xu noreply-wiselyalerts@tanla.com -xp 'Q&^%RT$#1235' -v -o tls=yes
+	cat mail.html | sendemail -f noreply@email.com -t devops@email.com -cc test@email.com -u ALERT : $1 mounts usage warning -s smtp.office365.com:587 -xu noreply@email.com -xp '$#1235' -v -o tls=yes
 else
 	echo "All mounts are less than 75% so no mail is required"
 fi

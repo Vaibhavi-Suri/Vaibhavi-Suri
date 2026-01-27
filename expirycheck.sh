@@ -30,10 +30,10 @@ sed -i -e "s~\\\\\\\\~/~" ./model/helpers/LinkHelper.js
 emailcheck)
 ####### Verifying cluster running status ######
 while IFS= read -r run; do
-if [ ! -z "$value" ] && [ "$run" = "api.tanla.com" ]
+if [ ! -z "$value" ] && [ "$run" = "api.email.com" ]
       then
         outputapi="OK"
-       elif [ $run == "wsly.ly" ]
+       elif [ $run == "email.ly" ]
          then
             output=$(curl -s https://$run/urlresolverapi/healthz)
         else  
@@ -71,7 +71,7 @@ if [ -e finaldomain.txt ]
 then
 while IFS= read -r line;do         
         echo "The domain name is $line"
-		if [ $line == "api.tanla.com" ]
+		if [ $line == "api.email.com" ]
         then
         	datediffstr=$value
                 if [ -z "$datediffstr" ]
@@ -160,4 +160,5 @@ fi
 *)
 echo "argument is not passed correctly"
 ;;
+
 esac

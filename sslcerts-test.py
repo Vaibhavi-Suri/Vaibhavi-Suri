@@ -47,10 +47,10 @@ if rows:
 else:
     print ("List is empty")
 html_table = df.to_html(index=False, border=1)
-sender_email = "vaibhavi.suri@gmail.com"
-receiver_email = "chaitanya2593@gmail.com"
-app_password = "wdgv iwdw etmc siii"  # Use your Gmail app password
-subject = f"SSL Expiry Report"  # Subject can use variables
+sender_email = "v***s@gmail.com"
+receiver_email = "c***3@gmail.com"
+app_password = "w***"
+subject = f"SSL Expiry Report"  
 body = f"""
 <html>
 <body>

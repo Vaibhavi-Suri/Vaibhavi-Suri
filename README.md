@@ -6,6 +6,18 @@ Hi there! 👋 I'm Vaibhavi Suri, a passionate DevOps Engineer with a focus on c
 
 ### 1. **Company Projects**
 Here are some of the key projects I've worked on at different companies:
+
+#### **Tangany GmbH, Munich, Germany**
+- **Project: Platform Development**  
+  - **Role:** DevOps Engineer  
+  - **Responsibilities:**  
+    - Designed and implemented Blue-Green Deployment strategy from scratch using Istio Service Mesh in Kubernetes to ensure zero-downtime releases.
+    - Automated Grafana alerting setup using Terraform by configuring alert rules, notification channels, and building Kubernetes-based dashboards to monitor critical application metrics.
+    - Led Proof of Concept for Azure Load Testing by architecting scalable infrastructure and creating generic CI/CD pipelines for GraphQL and REST API performance testing.
+    - Migrated Postman REST API test suites into CI/CD pipelines for automated API validation and continuous quality checks.
+    - Built end-to-end infrastructure provisioning and environment setup using Terraform from scratch following best practices.
+    - Designed and deployed Kubernetes Jobs to automate database migration workflows and reduce manual intervention across environments.
+
 #### **Deliotte India**
 - **Project: T&I**  
   - **Role:** Senior Analyst DevOps Engineer  

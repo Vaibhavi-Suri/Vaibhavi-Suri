@@ -1,0 +1,129 @@
+# Default values for wiki-service-helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+components:
+- image:
+    deployment: 
+      enabled: true
+    service: 
+      enabled: true
+    prometheus:
+      enabled: false
+    ingress:
+      enabled: false        
+    comp_name: wiki-service
+    image_name: wiki-service_image
+    namespace: default
+    repository: 
+    tag: latest
+    targetport: "8000"
+    port: "80"
+    type: "ClusterIP"
+    env:
+      - name: DATABASE_URL
+        value: "postgresql+asyncpg://app:app@wiki-service-postgres.default.svc.cluster.local:5432/appdb"
+
+- image:
+    deployment: 
+      enabled: true
+    service: 
+      enabled: true
+    prometheus:
+      enabled: false
+    ingress:
+      enabled: false        
+    comp_name: wiki-service-postgres
+    image_name: postgres
+    tag: "15"
+    targetport: "5432"
+    port: "5432"
+    type: "ClusterIP"
+    env:
+      - name: POSTGRES_USER
+        value: "app"
+      - name: POSTGRES_PASSWORD
+        value: "app"
+      - name: POSTGRES_DB
+        value: "appdb"
+    volumemounts:
+      - name: postgres-data
+        mountPath: /var/lib/postgresql/data
+    volumes:
+      - name: postgres-data
+        emptyDir: {}
+
+- image:
+    deployment: 
+      enabled: true
+    service: 
+      enabled: true
+    prometheus:
+      enabled: true
+    ingress:
+      enabled: false      
+    comp_name: wiki-service-prometheus
+    image_name: prom/prometheus
+    tag: latest
+    targetport: "9090"
+    port: "9090"
+    type: "NodePort"
+    volumemounts:
+      - name: prometheus-config-volume
+        mountPath: /etc/prometheus/prometheus.yml
+        subPath: prometheus.yml
+    volumes:
+      - name: prometheus-config-volume
+        configMap:
+          name: wiki-service-prometheus
+
+- image:
+    deployment: 
+      enabled: true
+    service: 
+      enabled: true
+    prometheus:
+      enabled: false
+    ingress:
+      enabled: false     
+    comp_name: wiki-service-grafana
+    image_name: grafana/grafana
+    tag: latest
+    targetport: "3000"
+    port: "3000"
+    type: "NodePort"
+    env:
+      - name: GF_SERVER_ROOT_URL
+        value: "http://localhost:3000"  ## pass this to work locally http://localhost:3000
+      - name: GF_SERVER_SERVE_FROM_SUB_PATH
+        value: "true"
+      - name: GF_DASHBOARDS_JSON_ENABLED
+        value: "true"
+      - name: GF_PATHS_PROVISIONING
+        value: /etc/grafana/provisioning      
+    volumes:
+      - name: grafana-dashboards
+        configMap:
+          name: creation-dashboard
+      - name: grafana-provisioning
+        configMap:
+          name: grafana-provisioning
+      - name: grafana-datasources
+        configMap:
+          name: grafana-datasources             
+    volumeMounts:
+      - name: grafana-dashboards
+        mountPath: /var/lib/grafana/dashboards
+      - name: grafana-provisioning
+        mountPath: /etc/grafana/provisioning/dashboards
+      - name: grafana-datasources
+        mountPath: /etc/grafana/provisioning/datasources                   
+
+- image:
+    ingress:
+      enabled: true
+    deployment: 
+      enabled: false
+    service: 
+      enabled: false
+    prometheus:
+      enabled: false      

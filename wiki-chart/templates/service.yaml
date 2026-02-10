@@ -1,0 +1,17 @@
+{{- range .Values.components }}
+{{- if .image.service.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .image.comp_name }}
+spec:
+  type: {{ .image.type }}
+  ports:
+  - port: {{ .image.port }}
+    protocol: TCP
+    targetPort: {{ .image.targetport }}
+  selector:
+    instance: {{ .image.comp_name }}
+{{- end -}}
+{{- end -}} 

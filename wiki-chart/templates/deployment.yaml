@@ -1,0 +1,80 @@
+{{- range .Values.components }}
+{{- if .image.deployment.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .image.comp_name }}
+  {{- if .image.namespace }}
+  namespace: {{ .image.namespace }}
+  {{- else }}
+  namespace: default
+  {{- end }}  
+  labels:
+    instance: {{ .image.comp_name }}
+spec:
+  {{- if .image.replicas }}
+  replicas: {{ .image.replicas }}
+  {{- else }}
+  replicas: 1
+  {{- end }}
+  selector: 
+    matchLabels:
+      instance: {{ .image.comp_name }}    
+  template:
+    metadata:
+      labels:
+        instance: {{ .image.comp_name }}   
+    spec:
+      {{- if eq .image.image_name "wiki-service" }}
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.35
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for Postgres..."
+              until nc -z wiki-service-postgres 5432; do
+                echo "Postgres not ready yet..."
+                sleep 2
+              done
+              echo "Postgres is ready!"
+              sleep 5
+      {{- end }}           
+      containers:
+        - name: {{ .image.comp_name }}
+          image: {{ .image.image_name }}:{{ .image.tag }}
+          imagePullPolicy: IfNotPresent
+          {{- if .image.env }}
+          env:
+            {{- toYaml .image.env | nindent 12 }}
+          {{- end }}
+          {{- if eq .image.image_name "wiki-service-postgres" }}           
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U app
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          {{- end }}                                                                               
+          ports:
+            - name: http
+              containerPort: {{ .image.targetport }}
+              protocol: TCP
+          {{- if .image.resources }}
+          resources:
+            {{- toYaml .image.resources | nindent 12 }}
+          {{- end }}
+          {{- if .image.volumeMounts }}              
+          volumeMounts:                    
+            {{- toYaml .image.volumeMounts | nindent 12 }}
+          {{- end }}
+      {{- if .image.volumes }}
+      volumes:                  
+        {{- toYaml .image.volumes | nindent 6 }}
+      {{- end }}
+{{- end -}}
+{{- end -}}                              
